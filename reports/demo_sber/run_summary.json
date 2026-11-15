@@ -1,0 +1,8 @@
+{
+  "status": "completed",
+  "provider": "scripted",
+  "model": "demo-script-v1",
+  "response": "Готово. SBER SMA 20/50: доходность -2.40%, buy & hold +10.18%, максимальная просадка -15.52%, закрытых сделок 7. Независимая сверка: PASS, расхождение капитала ≤ 0.0 ₽. Новости: совпадения найдены для 5 из 5 движений; причинность не утверждается.\n\nОтчёт: /Users/pavelesipenok/Downloads/agent project/moex-strategy-agent/reports/demo_sber/report.html\n\nЭто исследование на исторических данных, а не инвестиционная рекомендация. Прошлая доходность не гарантирует будущую. Результат чувствителен к допущениям, комиссиям, налогам, ликвидности и качеству данных.",
+  "run_dir": "/Users/pavelesipenok/Downloads/agent project/moex-strategy-agent/reports/demo_sber",
+  "report": "/Users/pavelesipenok/Downloads/agent project/moex-strategy-agent/reports/demo_sber/report.html"
+}

@@ -1,0 +1,75 @@
+[
+  {
+    "name": "formalize_strategy",
+    "description": "Формализует long-only стратегию пересечения двух SMA из естественного языка. Используй первым для запроса на бэктест. Не используй для произвольных индикаторов, шорта, плеча, стопов. Возвращает проверенную спецификацию и явные допущения.",
+    "arguments": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "description": "Стратегия на русском или английском: тикер, период, SMA, капитал и комиссия",
+          "maxLength": 2000,
+          "minLength": 10,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "FormalizeArgs",
+      "type": "object"
+    },
+    "not_from_model": "Правила исполнения, поддерживаемый рынок TQBR и дневной интервал заданы кодом",
+    "result_and_limit": "1 спецификация и не более 8 допущений",
+    "errors": "validation, unsupported_strategy",
+    "type": "read_only",
+    "failure_policy": "До двух технических повторов только для retryable-ошибок; затем структурированная ошибка"
+  },
+  {
+    "name": "backtest_moex_strategy",
+    "description": "Загружает дневные свечи MOEX ISS для стратегии из сессии, считает сделки и метрики, сравнивает с buy & hold, сверяет каждую точку капитала с независимой pandas-реализацией и создаёт отчёт. Используй только после formalize_strategy. Не выбирай тикер и пути к файлам в этом вызове.",
+    "arguments": {
+      "additionalProperties": false,
+      "properties": {},
+      "title": "BacktestArgs",
+      "type": "object"
+    },
+    "not_from_model": "Спецификация, каталог кэша и отчёта, URL ISS, права и независимая сверка берутся из сессии/конфига",
+    "result_and_limit": "Метрики, максимум 5 сделок и пути к артефактам; полный CSV остаётся на диске",
+    "errors": "missing_state, validation, not_found, timeout, service_unavailable, insufficient_data, crosscheck_failed",
+    "type": "read_only",
+    "failure_policy": "До двух технических повторов только для retryable-ошибок; затем структурированная ошибка"
+  },
+  {
+    "name": "link_price_moves_to_news",
+    "description": "Находит публикации из открытых RSS рядом с крупнейшими дневными движениями цены после бэктеста. Сопоставляет только дату и название компании/тикер. Не используй для вывода о причине движения. Возвращает ссылки и явное предупреждение об отсутствии доказанной причинности.",
+    "arguments": {
+      "additionalProperties": false,
+      "properties": {
+        "top_n": {
+          "default": 5,
+          "description": "Сколько самых резких дневных движений рассмотреть",
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Top N",
+          "type": "integer"
+        },
+        "window_days": {
+          "default": 1,
+          "description": "Допустимое расстояние между днём движения и публикацией",
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Window Days",
+          "type": "integer"
+        }
+      },
+      "title": "NewsArgs",
+      "type": "object"
+    },
+    "not_from_model": "Список доверенных RSS, таймауты, лимит 100 записей на ленту и правила сопоставления заданы кодом",
+    "result_and_limit": "До 10 движений, до 3 новостей на движение, до 300 RSS-записей всего",
+    "errors": "missing_state, timeout, feed_error, not_found",
+    "type": "read_only",
+    "failure_policy": "Ошибка одной ленты фиксируется и не отменяет остальные; сетевой сбой может использовать маркированный снапшот"
+  }
+]

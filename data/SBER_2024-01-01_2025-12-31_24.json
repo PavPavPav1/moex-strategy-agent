@@ -1,0 +1,17 @@
+{
+  "source": "MOEX ISS",
+  "source_url": "https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQBR/securities/SBER.json?from=2024-01-01&till=2025-12-31&iss.meta=off&history.columns=TRADEDATE,OPEN,CLOSE,HIGH,LOW,VOLUME",
+  "fetched_at": "2026-11-15T19:15:24.756188+00:00",
+  "rows": 510,
+  "sha256": "3774464b77ab7943b2bc5252d47821babc8f16d1883c9c9009e9d93c2b4faccc",
+  "pagination": [
+    0,
+    100,
+    200,
+    300,
+    400,
+    500
+  ],
+  "first": "2024-01-03",
+  "last": "2025-12-30"
+}

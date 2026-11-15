@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "moex-strategy-agent"
+version = "1.0.0"
+description = "Агент формализации и проверки SMA-стратегий на данных Московской биржи"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "feedparser>=6.0,<7",
+  "matplotlib>=3.7,<4",
+  "numpy>=1.23,<3",
+  "pandas>=1.5,<3",
+  "pydantic>=2.7,<3",
+  "requests>=2.31,<3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4,<9"]
+
+[project.scripts]
+moex-agent = "moex_agent.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"

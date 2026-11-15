@@ -1,0 +1,49 @@
+{
+  "metrics": {
+    "initial_capital_rub": 1000000.0,
+    "final_equity_rub": 976040.97,
+    "total_return_pct": -2.3959,
+    "cagr_pct": -1.211,
+    "max_drawdown_pct": -15.5227,
+    "max_drawdown_peak": "2024-07-02",
+    "max_drawdown_trough": "2025-01-09",
+    "max_underwater_days": 203,
+    "annualized_volatility_pct": 14.2666,
+    "sharpe_rf0": -0.0127,
+    "closed_trades": 7,
+    "orders": 14,
+    "win_rate_pct": 14.29,
+    "profit_factor": 0.7619,
+    "avg_trade_return_pct": -0.2818,
+    "exposure_pct": 47.45,
+    "total_fees_rub": 6874.21,
+    "excess_return_pp": -12.5808
+  },
+  "buy_hold": {
+    "initial_capital_rub": 1000000.0,
+    "final_equity_rub": 1101849.32,
+    "total_return_pct": 10.1849,
+    "cagr_pct": 4.9935,
+    "max_drawdown_pct": -32.033,
+    "max_drawdown_peak": "2024-07-02",
+    "max_drawdown_trough": "2024-11-26",
+    "max_underwater_days": 384,
+    "annualized_volatility_pct": 23.5536,
+    "sharpe_rf0": 0.3008,
+    "closed_trades": 1,
+    "orders": 2,
+    "win_rate_pct": 100.0,
+    "profit_factor": null,
+    "avg_trade_return_pct": 10.1877,
+    "exposure_pct": 99.8,
+    "total_fees_rub": 1050.68
+  },
+  "data": {
+    "source": "iss_cache",
+    "source_url": "https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQBR/securities/SBER.json?from=2024-01-01&till=2025-12-31&iss.meta=off&history.columns=TRADEDATE,OPEN,CLOSE,HIGH,LOW,VOLUME",
+    "cache_path": "/Users/pavelesipenok/Downloads/agent project/moex-strategy-agent/data/SBER_2024-01-01_2025-12-31_24.csv",
+    "warning": null,
+    "fetched_at": "2026-11-15T19:15:24.756188+00:00",
+    "sha256": "3774464b77ab7943b2bc5252d47821babc8f16d1883c9c9009e9d93c2b4faccc"
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "crosscheck.json": {
+    "bytes": 479,
+    "sha256": "e8cb64e1eb825138d3583de709554ed9cf5c2ffee7cedc1f3a1ffc78d7889cfd"
+  },
+  "diagnostics.json": {
+    "bytes": 5692,
+    "sha256": "f0a8df25446a215b424530dfd939c7742b20ebe1e653e17752302206e2b84f89"
+  },
+  "drawdown.png": {
+    "bytes": 132147,
+    "sha256": "043feb462b3453144dfb74cd44b5ed5c158aaa762a0e2ab7809c8a7eb7bef345"
+  },
+  "equity.csv": {
+    "bytes": 53003,
+    "sha256": "5f1928002bca2af92e892c19bd0f71cd3150b3c867f5780eb1b5d3450f229324"
+  },
+  "equity.png": {
+    "bytes": 148384,
+    "sha256": "ec3aeec1474e4795246e0d8b38b3a9751a1b0a81c925c423980c9eca088e408f"
+  },
+  "metrics.json": {
+    "bytes": 1685,
+    "sha256": "ea511fdbafb7e07bd6b0e9fba782fb7bcee7b4947f2236b4e89446563b83c790"
+  },
+  "news_matches.json": {
+    "bytes": 4296,
+    "sha256": "ba99c5db5a453af519b5013bc9d0441f82d6252d2756f43f5da3e5a99ce84336"
+  },
+  "report.html": {
+    "bytes": 630785,
+    "sha256": "7d4f1239401efdb575eb9d9ba44209e2e4ba00b766d4d3920ae0aa5bb606f9a0"
+  },
+  "report.md": {
+    "bytes": 5186,
+    "sha256": "8ed153b8d98dd41ef2df04c5cda8a60bcbacfa59d3dff17dbbe446ba578f8a93"
+  },
+  "run_summary.json": {
+    "bytes": 1201,
+    "sha256": "ee2da8c85aa9795a8fa8414ecf26bd0c20afbde6cca0e12dd8c63a58e50a3d6c"
+  },
+  "signals.png": {
+    "bytes": 181874,
+    "sha256": "d17ed799603f9ae61be23f20ee05bd43e981c83a52c4d019e4f6ddc705f2253f"
+  },
+  "strategy.json": {
+    "bytes": 700,
+    "sha256": "6a19b5883f96ae1860badf637dfac252a57a31481c37ab41d9e020fa10268d8e"
+  },
+  "trades.csv": {
+    "bytes": 652,
+    "sha256": "1f9493b32b5164bb931c927c0c41191606f71f49988470fb8b01d6e6573c7429"
+  },
+  "yearly.png": {
+    "bytes": 34272,
+    "sha256": "7f9df8e0ee3dd3cd8362e28eb1f1c77338d508dec3327bdf95ffd949ce2c9425"
+  }
+}

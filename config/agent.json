@@ -1,0 +1,15 @@
+{
+  "provider": "scripted",
+  "model": "demo-script-v1",
+  "base_url": "https://gigachat.devices.sberbank.ru/api/v1/chat/completions",
+  "api_key_env": "LLM_API_KEY",
+  "temperature": 0.0,
+  "max_steps": 6,
+  "tool_timeout_seconds": 45,
+  "tool_attempts": 2,
+  "max_tool_result_chars": 12000,
+  "cache_only": false,
+  "data_dir": "data",
+  "output_dir": "reports/demo_sber",
+  "rss_sources_file": "config/rss_sources.json"
+}

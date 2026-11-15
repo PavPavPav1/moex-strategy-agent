@@ -1,0 +1,14 @@
+[
+  {
+    "name": "РБК",
+    "url": "https://rssexport.rbc.ru/rbcnews/news/30/full.rss"
+  },
+  {
+    "name": "Интерфакс",
+    "url": "https://www.interfax.ru/rss.asp"
+  },
+  {
+    "name": "Коммерсантъ",
+    "url": "https://www.kommersant.ru/RSS/news.xml"
+  }
+]

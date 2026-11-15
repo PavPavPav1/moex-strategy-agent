@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "implementation": "pandas rolling + NumPy targets + отдельный денежный цикл",
+  "sessions_compared": 510,
+  "max_abs_equity_difference_rub": 0.0,
+  "max_abs_trade_pnl_difference_rub": 0.0,
+  "return_difference_pp": 3.16e-06,
+  "drawdown_difference_pp": 3.315e-05,
+  "primary_trades": 7,
+  "independent_trades": 7,
+  "tolerance_rub": 0.01,
+  "primary_equity_sha256": "e190849b2e6adac3510c80bcd81fe053f5fdc96424c6163f60ad2b92c1696581"
+}
