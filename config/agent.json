@@ -11,5 +11,6 @@
   "cache_only": false,
   "data_dir": "data",
   "output_dir": "reports/demo_sber",
-  "rss_sources_file": "config/rss_sources.json"
+  "rss_sources_file": "config/rss_sources.json",
+  "news_enabled": false
 }

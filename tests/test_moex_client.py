@@ -30,3 +30,13 @@ def test_missing_cache_returns_not_found(tmp_path, spec):
     with pytest.raises(ToolProblem) as error:
         client.fetch(spec)
     assert error.value.kind == "not_found"
+
+
+def test_cache_tampering_is_rejected(tmp_path, spec, candles):
+    client = MOEXClient(tmp_path, cache_only=True)
+    client._save_cache(spec, candles)
+    path = client._cache_path(spec)
+    path.write_text(path.read_text().replace('100.0', '101.0'))
+    with pytest.raises(ToolProblem) as error:
+        client.fetch(spec)
+    assert error.value.kind == 'bad_cache'

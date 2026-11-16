@@ -83,6 +83,34 @@ def _extract_fee(text: str, assumptions: List[str]) -> float:
     return 5.0
 
 
+def _validate_supported_rules(text: str) -> None:
+    hint = "Поддерживается только покупка при SMA fast > SMA slow и выход при fast <= slow; убери дополнительные условия"
+    if re.search(r"\b(?:RSI|EMA|MACD|ATR|ADX|VWAP|ROC|CCI|STOCH|WMA)\b|боллиндж|стохаст|экспоненциал|тейк|стоп|stop.?loss|take.?profit", text, re.IGNORECASE):
+        raise ToolProblem("unsupported_strategy", "Неподдерживаемый индикатор или условие выхода", hint)
+    functions = re.findall(r"\b([A-Za-z][A-Za-z0-9_]*)\s*\(", text)
+    if any(name.upper() != "SMA" for name in functions):
+        raise ToolProblem("unsupported_strategy", "Поддерживается только индикатор SMA", hint)
+    # Keep each trading action with its own condition, including condition-first phrasing.
+    text = re.sub(r"((?:покуп\w*|прода\w*|купить|buy|sell))\s*,\s*(?=когда|если|при|when|if)", r"\1 ", text, flags=re.IGNORECASE)
+    clauses = re.split(r"[,;.!?\n]|\s+(?:и|and)\s+(?=прода|покуп|buy|sell)", text, flags=re.IGNORECASE)
+    comparison = re.compile(r"SMA\s*\(\s*(\d+)\s*\)\s*(>=|<=|>|<|≥|≤|выше|ниже|больше|меньше)\s*SMA\s*\(\s*(\d+)\s*\)", re.IGNORECASE)
+    for clause in clauses:
+        buy = bool(re.search(r"покуп|купить|\bbuy\b", clause, re.IGNORECASE))
+        sell = bool(re.search(r"прода|продать|\bsell\b", clause, re.IGNORECASE))
+        if not (buy or sell):
+            continue
+        matches = list(comparison.finditer(clause))
+        for match in matches:
+            left, operator, right = int(match[1]), match[2].lower(), int(match[3])
+            greater = operator in (">", ">=", "≥", "выше", "больше")
+            bullish = (left < right) == greater
+            # Equality at entry is unsupported; exit on equality is the engine default.
+            if buy == sell or (buy and (not bullish or operator in (">=", "<=", "≥", "≤"))) or (sell and bullish):
+                raise ToolProblem("unsupported_strategy", "Условие покупки/продажи отличается от поддерживаемой SMA-стратегии", hint)
+        if not matches and re.search(r"ниже|меньше|выше|больше|[<>≤≥]", clause, re.IGNORECASE):
+            raise ToolProblem("unsupported_strategy", "Неоднозначное условие сигнала; укажи обе SMA с окнами", hint)
+
+
 def formalize_strategy(text: str) -> Tuple[StrategySpec, List[str]]:
     if not text or not 10 <= len(text.strip()) <= 2000:
         raise ToolProblem(
@@ -97,6 +125,7 @@ def formalize_strategy(text: str) -> Tuple[StrategySpec, List[str]]:
             "Эта версия поддерживает только длинную SMA-стратегию без плеча, стопов и шорта",
             "Убери неподдерживаемые условия и задай два окна скользящих средних",
         )
+    _validate_supported_rules(text)
     assumptions: List[str] = []
     ticker = _extract_ticker(text)
     fast, slow, window_assumptions = _extract_windows(text)

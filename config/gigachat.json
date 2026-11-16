@@ -1,0 +1,18 @@
+{
+  "provider": "gigachat",
+  "model": "auto",
+  "base_url": "https://api.giga.chat/v1/chat/completions",
+  "temperature": 0.0,
+  "max_steps": 6,
+  "tool_timeout_seconds": 180,
+  "tool_attempts": 3,
+  "max_tool_result_chars": 12000,
+  "cache_only": false,
+  "data_dir": "data",
+  "output_dir": "reports/gigachat",
+  "rss_sources_file": "config/rss_sources.json",
+  "scope": "GIGACHAT_API_PERS",
+  "ca_bundle_file": "config/certs/gigachat-ca.pem",
+  "moex_timeout_seconds": 30,
+  "news_enabled": false
+}

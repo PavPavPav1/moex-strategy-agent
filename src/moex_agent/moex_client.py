@@ -1,6 +1,7 @@
 import csv
 import hashlib
 import json
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -63,7 +64,10 @@ class MOEXClient:
     def _fetch_remote(self, spec: StrategySpec) -> List[Candle]:
         candles: List[Candle] = []
         start = 0
+        deadline = time.monotonic() + 120
         while True:
+            if time.monotonic() >= deadline:
+                raise ServiceTimeout("Превышен общий лимит загрузки MOEX ISS (120 секунд)")
             payload = self._request_page(spec, start)
             block = payload["history"]
             rows = block.get("data") or []
@@ -73,7 +77,7 @@ class MOEXClient:
             for row in rows:
                 item = dict(zip(columns, row))
                 if not all(item.get(key) is not None for key in ("TRADEDATE", "OPEN", "CLOSE", "HIGH", "LOW")):
-                    continue
+                    raise ToolProblem("bad_response", "MOEX ISS вернул свечу с пропущенными ценами или датой", "Данные отклонены; проверь источник")
                 candles.append(Candle(
                     tradedate=item["TRADEDATE"],
                     open=float(item["OPEN"]),
@@ -85,7 +89,7 @@ class MOEXClient:
             cursor = payload.get("history.cursor", {})
             cursor_rows = cursor.get("data") or []
             total = dict(zip(cursor.get("columns", []), cursor_rows[0])).get("TOTAL", len(candles)) if cursor_rows else len(candles)
-            if not rows or len(candles) >= int(total):
+            if not rows or start + len(rows) >= int(total):
                 break
             start += len(rows)
             if start > 100_000:
@@ -136,6 +140,11 @@ class MOEXClient:
         metadata = {}
         if metadata_path.exists():
             metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        if not metadata.get("sha256") or metadata["sha256"] != digest:
+            raise ToolProblem("bad_cache", "SHA-256 снапшота отсутствует или не совпадает", "Сохрани повреждённый файл отдельно и заново загрузи данные")
+        if len(candles) < spec.slow_window + 2:
+            raise ToolProblem("insufficient_data", "Недостаточно свечей в снапшоте", "Увеличь период")
         return DataBundle(
             candles=candles,
             source=source,

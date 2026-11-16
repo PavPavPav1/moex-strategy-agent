@@ -39,6 +39,7 @@ class ToolRuntime:
     moex: MOEXClient
     news: NewsClient
     cache_only: bool = False
+    request_text: Optional[str] = None
 
 
 @dataclass
@@ -55,7 +56,7 @@ class ToolContract:
 
 
 def formalize_tool(args: FormalizeArgs, runtime: ToolRuntime) -> Dict[str, Any]:
-    spec, assumptions = formalize_strategy(args.text)
+    spec, assumptions = formalize_strategy(runtime.request_text or args.text)
     runtime.session.strategy = spec
     runtime.session.assumptions = assumptions
     return {
@@ -181,6 +182,7 @@ class ToolExecutor:
         self.timeout_seconds = timeout_seconds
         self.max_result_chars = max_result_chars
         self.faults = {name: list(values) for name, values in (faults or {}).items()}
+        self.event_handler = None
         self.trace_path = runtime.session.run_dir / "trace.jsonl"
         self.trace_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -226,7 +228,7 @@ class ToolExecutor:
             future.cancel()
             raise ServiceTimeout("Инструмент превысил лимит времени") from exc
         finally:
-            pool.shutdown(wait=False, cancel_futures=True)
+            pool.shutdown(wait=True, cancel_futures=True)
 
     def execute(self, name: str, raw_args: Dict[str, Any], step: int = 0) -> Dict[str, Any]:
         started = time.monotonic()
@@ -265,6 +267,9 @@ class ToolExecutor:
                 will_retry = exc.retryable and attempt < self.attempts
                 self._log("tool_error", step, tool=name, args=raw_args, attempt=attempt, error=exc.as_dict()["error"], will_retry=will_retry)
                 if will_retry:
+                    if self.event_handler:
+                        self.event_handler("tool_retry", {"tool": name, "attempt": attempt,
+                                                          "attempts": self.attempts, "error": exc.as_dict()["error"]})
                     time.sleep(0.05 * (2 ** (attempt - 1)))
                     continue
                 return exc.as_dict()

@@ -54,3 +54,23 @@ def test_independent_returns_dataframe(spec, candles):
     assert list(frame.columns) == ["date", "equity", "position"]
     assert len(frame) == len(candles)
     assert len(trades) >= 1
+
+
+@__import__('pytest').mark.parametrize('field,value', [
+    ('entry_date', '2099-01-01'), ('exit_date', '2099-01-01'),
+    ('entry_price_rub', 99999.0), ('exit_price_rub', 99999.0),
+    ('quantity', 999999), ('fees_rub', 99999.0), ('net_pnl_rub', 99999.0),
+    ('return_pct', 999.0), ('holding_days', 9999), ('exit_reason', 'invented'),
+])
+def test_crosscheck_detects_each_changed_trade_field(spec, candles, field, value):
+    result = run_backtest(spec, candles)
+    result['trades'][0][field] = value
+    check = crosscheck(spec, candles, result)
+    assert check['status'] == 'FAIL'
+    assert any(item['field'] == field for item in check['trade_mismatches'])
+
+
+def test_crosscheck_detects_missing_trade_field(spec, candles):
+    result = run_backtest(spec, candles)
+    del result['trades'][0]['fees_rub']
+    assert crosscheck(spec, candles, result)['status'] == 'FAIL'

@@ -85,8 +85,23 @@ def crosscheck(spec: StrategySpec, candles: List[Candle], primary: Dict[str, Any
     differences = np.abs(comparison["equity_primary"].to_numpy() - comparison["equity_independent"].to_numpy())
     max_difference = float(differences.max()) if len(differences) else float("inf")
     trade_count_matches = len(primary["trades"]) == len(independent_trades)
+    # All fields are already rounded identically by both implementations.
+    # Money/prices/returns therefore compare exactly, without tolerating altered rows.
+    trade_mismatches = []
+    required_fields = {
+        "entry_date", "exit_date", "entry_price_rub", "exit_price_rub", "quantity",
+        "fees_rub", "net_pnl_rub", "return_pct", "holding_days", "exit_reason",
+    }
+    for index, (left, right) in enumerate(zip(primary["trades"], independent_trades)):
+        for field in sorted(set(left) | set(right) | required_fields):
+            if field not in left or field not in right or left[field] != right[field]:
+                trade_mismatches.append({"trade_index": index, "field": field,
+                                         "primary": left.get(field), "independent": right.get(field)})
+    if not trade_count_matches:
+        trade_mismatches.append({"field": "trade_count", "primary": len(primary["trades"]),
+                                 "independent": len(independent_trades)})
     pnl_differences = [
-        abs(left["net_pnl_rub"] - right["net_pnl_rub"])
+        abs(left.get("net_pnl_rub", float("inf")) - right["net_pnl_rub"])
         for left, right in zip(primary["trades"], independent_trades)
     ]
     max_pnl_difference = max(pnl_differences, default=0.0)
@@ -99,6 +114,7 @@ def crosscheck(spec: StrategySpec, candles: List[Candle], primary: Dict[str, Any
         len(comparison) == len(primary["equity"])
         and max_difference <= tolerance_rub
         and trade_count_matches
+        and not trade_mismatches
         and max_pnl_difference <= 0.01
         and return_difference <= 0.001
         and drawdown_difference <= 0.001
@@ -112,6 +128,9 @@ def crosscheck(spec: StrategySpec, candles: List[Candle], primary: Dict[str, Any
         "max_abs_trade_pnl_difference_rub": round(max_pnl_difference, 8),
         "return_difference_pp": round(return_difference, 8),
         "drawdown_difference_pp": round(drawdown_difference, 8),
+        "trade_fields_match": not trade_mismatches,
+        "trade_mismatch_count": len(trade_mismatches),
+        "trade_mismatches": trade_mismatches[:20],
         "primary_trades": len(primary["trades"]),
         "independent_trades": len(independent_trades),
         "tolerance_rub": tolerance_rub,

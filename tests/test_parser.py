@@ -38,3 +38,33 @@ def test_requires_ticker():
     with pytest.raises(ToolProblem) as error:
         formalize_strategy("Купить по SMA(20) и SMA(50) в 2024-01-01 — 2025-12-31")
     assert error.value.kind == "validation"
+
+
+@pytest.mark.parametrize('condition', [
+    'Покупай только если RSI(14) < 30',
+    'Фильтр MACD выше нуля',
+    'Покупай при EMA(10) > EMA(30)',
+    'Применяй CUSTOM(14)',
+    'Стоп 5%',
+    'Покупай, когда SMA(20) ниже SMA(50)',
+    'Покупай если SMA(20) < SMA(50)',
+    'SMA(20) < SMA(50) — покупка',
+    'Buy when SMA(20) < SMA(50)',
+    'Продавай когда SMA(20) > SMA(50)',
+    'Покупай когда SMA(20) >= SMA(50)',
+])
+def test_rejects_unsupported_conditions(condition):
+    with pytest.raises(ToolProblem) as error:
+        formalize_strategy('SBER 2024-01-01 2025-12-31 SMA(20) SMA(50). ' + condition)
+    assert error.value.kind == 'unsupported_strategy'
+
+
+@pytest.mark.parametrize('condition', [
+    'Покупай, когда SMA(20) выше SMA(50), продавай при обратном условии',
+    'SMA(20) > SMA(50) — покупка, SMA(20) < SMA(50) — продажа',
+    'Покупай при SMA(20) > SMA(50) и продавай при SMA(20) <= SMA(50)',
+    'Buy when SMA(20) > SMA(50); sell when SMA(20) < SMA(50)',
+])
+def test_supported_directions_still_work(condition):
+    spec, _ = formalize_strategy('SBER 2024-01-01 2025-12-31. ' + condition)
+    assert (spec.fast_window, spec.slow_window) == (20, 50)
